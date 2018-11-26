@@ -1,0 +1,63 @@
+package rysowanie;
+import java.awt.*;
+import java.awt.geom.*;
+import javax.swing.JPanel;
+import static trangulacja2.Trangulacja2.punkty;
+import static trangulacja2.Trangulacja2.wymiar;
+import static trangulacja2.Trangulacja2.przesuniecie_x;
+import static trangulacja2.Trangulacja2.pobierz;
+import static trangulacja2.Trangulacja2.pkt;
+import static trangulacja2.Trangulacja2.nr;
+
+public class panel extends JPanel {
+	public panel() {
+		setPreferredSize(new Dimension(wymiar+20, wymiar+ 20));
+	}
+        public static void rys_osie(Graphics2D g2d){
+            for(int i=0; i<4; i++) {    //osie x y
+                    Line2D os_x = new Line2D.Double(przesuniecie_x + 100*i,0,przesuniecie_x +100*i,wymiar);
+                    g2d.draw(os_x);
+                    Line2D os_y = new Line2D.Double(0,100*i,wymiar,100*i);
+                    g2d.draw(os_y);
+                }
+        }
+        public static void rys_punkty(Graphics2D g2d){
+            for(int i=0; i<pkt; i++) {  //punkty
+                    double xx = przesuniecie_x + punkty[i][0],    yy = wymiar-punkty[i][1];
+                    Ellipse2D circle = new Ellipse2D.Double(xx-5,yy-5,10,10);
+                    g2d.draw(circle);
+                }
+        }
+        public static void rys_lini(Graphics2D g2d,int t[][]){
+            for(int i = 0; i<nr;i++){     // kolejnosc punktow
+                    //Line2D linia2 = new Line2D.Double(przesuniecie_x + t[i][0],wymiar-t[i][1],przesuniecie_x + t[i+1][0],wymiar-t[i+1][1]);
+                    int p1 = pobierz(1,i);
+                    int p2 = pobierz(2,i);
+                    int p3 = pobierz(3,i);
+                    Line2D linia1 = new Line2D.Double(przesuniecie_x + punkty[p1][0],wymiar-punkty[p1][1],przesuniecie_x + punkty[p2][0],wymiar-punkty[p2][1]);
+                    g2d.draw(linia1);
+                    Line2D linia2 = new Line2D.Double(przesuniecie_x + punkty[p1][0],wymiar-punkty[p1][1],przesuniecie_x + punkty[p3][0],wymiar-punkty[p3][1]);
+                    g2d.draw(linia2);
+                    Line2D linia3 = new Line2D.Double(przesuniecie_x + punkty[p2][0],wymiar-punkty[p2][1],przesuniecie_x + punkty[p3][0],wymiar-punkty[p3][1]);
+                    g2d.draw(linia3);
+            }
+        }
+        public static void nr_punktu(Graphics2D g2d,int t[][]){
+             for(int i = 0; i<t.length;i++)     // kolejnosc punktow
+                {
+                    g2d.drawString("("+i+")", przesuniecie_x +t[i][0] +10 , wymiar - t[i][1] +10);
+                }
+        }
+	@Override
+	protected void paintComponent(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(Color.WHITE);
+                rys_osie(g2d);
+                g2d.setColor(Color.BLACK);
+                rys_punkty(g2d);
+                g2d.setColor(Color.RED);
+                rys_lini(g2d,punkty);
+                g2d.setColor(Color.BLUE);
+                nr_punktu(g2d,punkty);
+	}
+}
