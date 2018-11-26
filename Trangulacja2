@@ -1,0 +1,224 @@
+package trangulacja2;
+import java.util.Random;
+import javax.swing.JOptionPane;
+import static trangulacja2.Trangulacja2.punkty;
+import static trangulacja2.Trangulacja2.t1;
+
+    class trojkat{
+        public int p1;
+        int p2;
+        int p3;
+        public String toString() {
+	return "p1= " + p1+", p2= " + p2 +", p3= " + p3;
+        }
+    }
+
+public class Trangulacja2 {
+    public static int punkty[][];
+    public static int pkt = 100; //liczba punktow
+    public static int wymiar =650;
+    public static int przesuniecie_x;
+    public static int poczatek;
+    public static int x=0,y=1;
+    public static int nr;
+    public static trojkat t1[];
+    
+    public static int pobierz(int a, int nr1){
+        int spr=0;
+        if(a==1)
+            spr = t1[nr1].p1;
+        if(a==2)
+            spr = t1[nr1].p2;
+        if(a==3)
+            spr = t1[nr1].p3;
+        return spr;
+    }
+    
+    public static void tworzenie_punktow(){
+        Random generator = new Random();
+        int x1, y1;
+        for(int i=0; i<pkt; i++) {
+            x1 = generator.nextInt(wymiar);
+            y1 = generator.nextInt(wymiar);
+            punkty[i][0]=x1;
+            punkty[i][1]=y1;
+           for (int j = 0; j < i-2; j++) {
+                if(punkty[j][0]==x1&&punkty[j][1]==y1){
+                    i--;
+            }}}} 
+    
+    public static void wypisanie_punktow(int t[][]){
+        for(int i=0; i<t.length; i++)
+            System.out.println(i + ": " + t[i][x] + " " + t[i][y]);
+    }
+    public static double tabela_wyz(int p[],int q[], int a[]){
+        double t [][]=new double [3][3];
+        t[0][0]=p[x];
+        t[0][1]=p[y];
+        t[0][2]=1;
+        t[1][0]=q[x];
+        t[1][1]=q[y];
+        t[1][2]=1;
+        t[2][0]=a[x];
+        t[2][1]=a[y];
+        t[2][2]=1;
+        Macierz tablica = new Macierz(t);
+        return tablica.wyznaczWyznacznik();
+    }
+    public static double dwaD_wyz1(int p[],int q[],int a[]){
+        double ax=p[x]-a[x];      //-a  przesuniecie na punkt (0,0)
+        double ay=p[y]-a[y];      //-a  przesuniecie na punkt (0,0)
+        double bx=q[x]-a[x];
+        double by=q[y]-a[y];
+        return (ax*by) -(ay*bx);
+    }
+    public static double dlugosc(int p[],int a[]){
+        int x=0, y=1;
+        return (p[x]-a[x])*(p[x]-a[x])+(p[y]-a[y])*(p[y]-a[y]);
+    }
+    
+    public static void kopiowanie(int t[][], int tt[][],int nr1,int nr2){
+            t[nr1][0]=tt[nr2][0];
+            t[nr1][1]=tt[nr2][1];
+    }
+    public static int start(){
+        int a=0;
+        double spr = wymiar*2;
+        int nr=0;
+        for (int i = 1; i < punkty.length; i++) {
+            double prosta = Math.abs(punkty[i][x]-punkty[a][x])+Math.abs(punkty[i][y]-punkty[a][y]);
+            //System.out.println("prosta "+i+": "+ prosta);
+            if (prosta<spr){
+                spr=prosta;
+                nr=i;
+            }
+        }
+        System.out.println("wyliczona prosta: (" +a+ ","+ nr +")");
+        return nr;
+    }
+    public static void spr_prostej(int aa, int bb){
+        double spr1 = 0;
+        int l=-1;
+        int a[] = punkty[aa];
+        int b[] = punkty[bb];
+        double przekatna = dlugosc(a,b); //dla katow wiekszych jak 90 stopni
+        for (int i = 0; i < punkty.length; i++) {
+            if(aa==i&&bb==i){
+                continue;
+            }
+            double wyz  = tabela_wyz(a,b,punkty[i]);
+            double det = dwaD_wyz1(a,b,punkty[i]);
+            double dl1 = dlugosc(a,punkty[i]);
+            double dl2 = dlugosc(b,punkty[i]);
+            double sin = det*det;
+            if (wyz>0){//lewa
+                     if(dl1+dl2<przekatna){
+                        sin=2-sin/(dl1*dl2);
+                        if(sin>spr1){
+                            spr1=sin;
+                            l=i;
+                       }
+                    }
+                    else
+                        if(sin>spr1*(dl1*dl2)){
+                            spr1=sin/(dl1*dl2);
+                            l=i;
+                     }
+            }
+        }
+        if(l!=-1)
+        {
+            boolean powtorka = true;
+            for (int i = 0; i < nr; i++) {
+                if((aa == t1[i].p1 || bb== t1[i].p1 || l== t1[i].p1)&& 
+                   (aa == t1[i].p2 || bb== t1[i].p2 || l== t1[i].p2)&& 
+                   (aa == t1[i].p3 || bb== t1[i].p3 || l== t1[i].p3)){
+                    powtorka = false;
+                }
+            }
+            if(powtorka){
+                t1[nr] = new trojkat();
+                t1[nr].p1=aa;
+                t1[nr].p2=bb;
+                t1[nr].p3=l;
+                nr++;
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        String tekst = "Podaj liczbe punktow:";
+        String tekst2 = "Wymiar okna:";
+        pkt = Integer.parseInt(JOptionPane.showInputDialog(tekst ,  pkt));
+        wymiar = Integer.parseInt(JOptionPane.showInputDialog(tekst2 ,  wymiar));
+        punkty=new int [pkt][2];
+        tworzenie_punktow();
+        wypisanie_punktow(punkty);
+        t1 = new trojkat[pkt*20];
+        t1[0] = new trojkat();
+        nr=0;
+        spr_prostej(0,start());   //tworzymy pierwsze trojkaty
+        spr_prostej(start(),0); 
+        //int spr=nr;
+        for (int i = 0; i < nr; i++) { 
+            spr_prostej(t1[i].p3,t1[i].p2);
+            spr_prostej(t1[i].p1,t1[i].p3);
+            //spr=nr;     //po co to
+        }
+        for (int i = 0; i < nr; i++) {
+            System.out.println(i);
+            System.out.println(t1[i]);
+        }
+        JOptionPane.showMessageDialog(null, "Liczba trojkatow : " + nr + '\n');
+        java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run(){
+                new rysowanie.trasa().repaint();
+            }
+        });
+    }
+}
+
+/*
+    public static boolean legalize(int a1[], int a2[], int b1[], int b2[]){
+        //trójkat 1 = {a1,b1,a2}
+        //trójkat 2 = {a1,b1,b2}
+        //return true; krawedz legalna
+        double spr1 = 0;
+        boolean legal=true;
+        double przekatna=dlugosc(a1,b1);;
+        double det = dwaD_wyz1(a1,b1,a2);
+        double dl1 = dlugosc(a1,a2);
+        double dl2 = dlugosc(b1,a2);
+        double sin1 = det*det/(dl1*dl2);
+        if(dl1+dl2<przekatna)
+                        sin1=2-sin1/(dl1*dl2);
+        det = dwaD_wyz1(b1,a1,b2);
+        dl1 = dlugosc(a1,b2);
+        dl2 = dlugosc(b1,b2);
+        double sin2 = det*det/(dl1*dl2);
+        if(dl1+dl2<przekatna)
+                        sin2=2-sin2/(dl1*dl2);
+        if(sin1>sin2)
+            legal = false;
+        return legal;
+    }
+*/
+/*
+         for (int i = 0; i < punkty.length; i++) {
+            double wyz  = tabela_wyz(a,b,punkty[i]);
+            //System.out.println(wyz);
+            double det = dwaD_wyz(a,b,punkty[i]);
+            double dl1 = dlugosc(a,punkty[i]);
+            double dl2 = dlugosc(b,punkty[i]);
+            double sin = det*det/(dl1*dl2);
+            if(dl1+dl2<przekatna){
+                sin=2-sin;
+            }
+            if (wyz>0){//lewa
+                    if(sin>spr1){
+                        spr1=sin;
+                        l=i;
+                    }
+            }
+        }*/
+
