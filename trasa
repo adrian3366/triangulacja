@@ -1,0 +1,25 @@
+package rysowanie;
+import java.awt.Color;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import static trangulacja2.Trangulacja2.wymiar;
+import javax.swing.*;
+
+public class trasa extends JFrame {
+	public trasa() {
+		super("Geometria obliczeniowa");
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        setLocation(1200-wymiar, 0);
+                        JPanel panel = new panel();
+                        //panel.setBackground(Color.cyan);
+                        add(panel);
+                        pack();
+                        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        setVisible(true);
+                    }
+                });
+	}
+}
